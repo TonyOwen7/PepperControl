@@ -1,0 +1,76 @@
+{% extends 'robots/base.html' %}
+{% block title %}My Robots - Pepper Control{% endblock %}
+{% block extra_css %}
+<style>
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>My Robots</h1>
+
+    <!-- Robot Selector -->
+    <div class="robot-selector">
+        <label for="current-robot">Current Robot:</label>
+        <select id="current-robot" onchange="setCurrentRobot(this.value)">
+            {% for robot in robots %}
+                <option value="{{ robot.id }}" {% if robot.is_current %}selected{% endif %}>
+                    {{ robot.name }}
+                </option>
+            {% endfor %}
+        </select>
+       
+
+    </div>
+    {% for robot in robots %}
+    {% if robot.is_current %}
+        <p style="text-align: center;">
+            <a href="{% url 'control_robot' robot.id %}" class="control-btn" style="width: fit-content; text-align: center; margin: 0; margin-top: 20px;">Control Current Robot</a>
+        </p>
+    {% endif %}
+{% endfor %}
+    <script>
+        function setCurrentRobot(robotId) {
+            if (robotId) {
+                window.location.href = "{% url 'set_current_robot'  0  'user_robots' %}".replace('0', robotId);
+            }
+        }
+    </script>
+   
+
+    <div class="create-robot" style="text-align: center; padding: 40px 0;">
+        <p style="text-align: center; padding: 20px 0;">
+            <a href="{% url 'create_robot' %}" class="create-btn">Add a New Robot</a>
+        </p>
+    </div>
+
+    {% if robots %}
+        <ul class="robot-list">
+            {% for robot in robots %}
+                <li class="robot-item {% if robot.id == current_robot_id %}current-robot{% endif %}">
+                    <strong>{{ robot.name }}</strong>
+                    {% if robot.id == current_robot_id %}
+                        <span class="current-tag">(Current Robot)</span>
+                    {% endif %}
+                    <p><span class="label">Nao IP:</span> <span class="value">{{ robot.nao_ip }}</span></p>
+                    <p><span class="label">Network Interface:</span> <span class="value">{{ robot.network_interface }}</span></p>
+                    <p><span class="label">Language:</span> <span class="value">{{ robot.language }}</span></p>
+                    <p><span class="label">Floor:</span> <span class="value">{{ robot.floor }}</span></p>
+                    <p><span class="label">Row:</span> <span class="value">{{ robot.row }}</span></p>
+                    <p><span class="label">Column:</span> <span class="value">{{ robot.column }}</span></p>
+                    <p><span class="label">Direction:</span> <span class="value">{{ robot.direction }}</span></p>
+
+                    <div class="robot-actions">
+                        <a href="{% url 'control_robot' robot.id %}" class="control-btn">Control this Robot</a>
+                        <a href="{% url 'edit_robot' robot.id %}" class="edit-btn">Edit</a>
+                        <a href="{% url 'delete_robot' robot.id %}" class="delete-btn" onclick="return confirm('Are you sure you want to delete this robot?');">Delete</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p style="text-align: center;">You have no robots yet. <a href="{% url 'create_robot' %}">Add a new robot</a>.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

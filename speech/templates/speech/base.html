@@ -1,0 +1,56 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Pepper Control{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'speech/css/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}  <!-- For additional CSS files -->
+</head>
+<body>
+    <header class="header">
+        <h1>Control your Pepper</h1>
+        <nav class="header-nav">
+            {% if user.is_authenticated %}
+                <a href="{% url 'robot_configuration' %}" class="nav-link">Robot configuration</a>
+                <a href="{% url 'user_speeches' %}" class="nav-link">my speeches</a>
+                <a href="{% url 'user_maps' %}" class="nav-link">my maps</a>
+                <a href="{% url 'user_robots' %}" class="nav-link">my robots</a>
+                <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                <a href="{% url 'register' %}" class="nav-link">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="container_base" style="margin-top: 20px;">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}  <!-- Content block for child templates -->
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <span class="footer-logo">Pepper Control</span>
+            <span class="footer-divider">|</span>
+            <span>&copy; 2025 High-Tech Interface MBTO & IA</span>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}  <!-- For additional JavaScript files -->
+</body>
+</html>

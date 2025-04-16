@@ -1,0 +1,393 @@
+.container {
+  text-align: center;
+  background-color: #fff;
+  width: fit-content;
+  height: fit-content;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+#map {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.cell {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #000;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cell:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.cell.empty {
+  background-color: lightgreen;
+}
+
+.cell.obstacle {
+  background-color: silver;
+}
+
+.cell.room {
+  background-color: lightblue;
+}
+
+.cell.stairs {
+  background-color: #ffcc99; /* Apricot color */
+}
+
+.color-legend {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.legend-item:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.legend-item.selected {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  transform: scale(1.1);
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #000;
+}
+
+.color-box.empty {
+  background-color: lightgreen;
+}
+
+.color-box.obstacle {
+  background-color: silver;
+}
+
+.color-box.room {
+  background-color: lightblue;
+}
+
+.color-box.stairs {
+  background-color: #ffcc99; /* Apricot color */
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Carousel styles */
+.carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.carousel button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.carousel button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.carousel button:active {
+  transform: scale(0.95);
+}
+
+#matrix-index {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 10px;
+}
+
+#type-input {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+  .container {
+    text-align: center;
+    background-color: #fff;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .cell {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #000;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .cell:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .cell.empty {
+    background-color: lightgreen;
+  }
+
+  .cell.obstacle {
+    background-color: silver;
+  }
+
+  .cell.room {
+    background-color: lightblue;
+  }
+
+  .cell.stairs {
+    background-color: #ffcc99; /* Apricot color */
+  }
+
+  .color-legend {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .legend-item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .legend-item.selected {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transform: scale(1.1);
+  }
+
+  .color-box {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #000;
+  }
+
+  .color-box.empty {
+    background-color: lightgreen;
+  }
+
+  .color-box.obstacle {
+    background-color: silver;
+  }
+
+  .color-box.room {
+    background-color: lightblue;
+  }
+
+  .color-box.stairs {
+    background-color: #ffcc99; /* Apricot color */
+  }
+
+  .controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  /* Carousel styles */
+  .carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .carousel button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+
+  .carousel button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+
+  .carousel button:active {
+    transform: scale(0.95);
+  }
+
+  #matrix-index {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 10px;
+  }
+
+  #type-input {
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+
+  /* Floor switching animation styles */
+  .floor-container {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    perspective: 1000px;
+    margin-bottom: 20px;
+  }
+
+  .floor {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transition: all 0.5s ease;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+  }
+
+  .floor.active {
+    z-index: 10;
+    transform: translateZ(0) rotateX(0deg);
+  }
+
+  .floor.prev {
+    transform: translateZ(-100px) translateY(20px) rotateX(5deg);
+    opacity: 0.7;
+    z-index: 5;
+  }
+
+  .floor.next {
+    transform: translateZ(-200px) translateY(40px) rotateX(10deg);
+    opacity: 0.5;
+    z-index: 0;
+  }
+
+  .floor.hidden {
+    transform: translateZ(-300px) translateY(60px) rotateX(15deg);
+    opacity: 0;
+    z-index: -5;
+  }
+
+  /* Animation for switching floors */
+  @keyframes moveToTop {
+    from {
+      transform: translateZ(-100px) translateY(20px) rotateX(5deg);
+      opacity: 0.7;
+    }
+    to {
+      transform: translateZ(0) rotateX(0deg);
+      opacity: 1;
+    }
+  }
+
+  @keyframes moveToBottom {
+    from {
+      transform: translateZ(0) rotateX(0deg);
+      opacity: 1;
+    }
+    to {
+      transform: translateZ(-300px) translateY(60px) rotateX(15deg);
+      opacity: 0;
+    }
+  }
+
+  .floor.moving-to-top {
+    animation: moveToTop 0.5s forwards;
+  }
+
+  .floor.moving-to-bottom {
+    animation: moveToBottom 0.5s forwards;
+  }
+
+  

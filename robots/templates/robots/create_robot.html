@@ -1,0 +1,71 @@
+{% extends 'robots/base.html' %}
+{% block title %}Add a New Robot - Pepper Control{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Add a New Robot</h1>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Robot Name</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div class="error">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.nao_ip.id_for_label }}">Nao IP</label>
+            {{ form.nao_ip }}
+            {% if form.nao_ip.errors %}
+                <div class="error">{{ form.nao_ip.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.network_interface.id_for_label }}">Network Interface</label>
+            {{ form.network_interface }}
+            {% if form.network_interface.errors %}
+                <div class="error">{{ form.network_interface.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.language.id_for_label }}">Language</label>
+            {{ form.language }}
+            {% if form.language.errors %}
+                <div class="error">{{ form.language.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group coords-container">
+            <div class="coords-item">
+                <label for="{{ form.floor.id_for_label }}">Floor</label>
+                {{ form.floor }}
+            </div>
+            <div class="coords-item">
+                <label for="{{ form.row.id_for_label }}">Row</label>
+                {{ form.row }}
+            </div>
+            <div class="coords-item">
+                <label for="{{ form.column.id_for_label }}">Column</label>
+                {{ form.column }}
+            </div>
+           
+        </div>
+        
+
+        <div class="form-group">
+            <label for="{{ form.direction.id_for_label }}">Direction</label>
+            {{ form.direction }}
+            {% if form.direction.errors %}
+                <div class="error">{{ form.direction.errors }}</div>
+            {% endif %}
+        </div>
+
+       
+        <button type="submit" class="submit-btn">Save</button>
+    </form>
+    <a href="{% url 'user_robots' %}" class="back-link">Back to my robots</a>
+</div>
+{% endblock %}

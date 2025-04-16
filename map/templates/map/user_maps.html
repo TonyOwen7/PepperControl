@@ -1,0 +1,78 @@
+{% extends 'map/base.html' %}
+{% block title %}Your Maps - Pepper Control{% endblock %}
+{% block extra_css %}
+<!-- {% load static %} -->
+
+<link rel="stylesheet" href="{% static 'map/css/user_maps.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container" style="flex-grow: 1;">
+    <h1>Your Maps</h1>
+
+    <!-- Choose Current Map Dropdown -->
+<!-- Current Map Selector -->
+<div class="map-selector">
+  <label for="current-map">Current Map:</label>
+  <select id="current-map" onchange="setCurrentMap(this.value)">
+      {% for map in maps %}
+          <option value="{{ map.id }}" {% if map.is_current %}selected{% endif %}>
+              {{ map.name }}
+          </option>
+      {% endfor %}
+  </select>
+</div>
+{% if maps %}
+    {% for map in maps %}  
+      {% if map.is_current %}
+            <p style="width: fit-content; text-align: center;margin: auto;">
+                <a href="{% url 'edit_map' map.name  map.id %}" class="edit-btn">Edit current map</a>
+            </p>
+      {% endif %}
+
+    {% endfor %}
+{% endif %}
+
+
+
+    <!-- Create New Map Button -->
+    <div class="create-map" style="text-align: center; padding-bottom:20px;">
+        <a href="{% url 'edit_map' %}" class="create-btn">Create New Map</a>
+    </div>
+
+    <!-- List of Maps -->
+    {% if maps %}
+        <ul class="map-list" style="width: 100%; display: flex;justify-content: center; align-items: center;">
+            {% for map in maps %}
+                <li class="map-item">
+                    <strong>{{ map.name }}</strong><br>
+                    <p>
+                        <span class="label">Created At:</span>
+                        <span class="value">{{ map.created_at }}</span>
+                    </p>
+                    <p>
+                        <span class="label">Updated At:</span>
+                        <span class="value">{{ map.updated_at }}</span>
+                    </p>
+                    <div class="map-actions">
+                        <a href="{% url 'edit_map' map.name  map.id %}" class="edit-btn">Edit</a>
+                        <a href="{% url 'delete_map' map.id %}" class="delete-btn" onclick="return confirm('Are you sure you want to delete this map?');">Delete</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p style="text-align: center;">You have no maps yet. <a href="{% url 'edit_map' %}">Create a new map</a>.</p>
+    {% endif %}
+</div>
+
+<script>
+
+  
+function setCurrentMap(mapId) {
+    if (mapId) {
+        window.location.href = "{% url 'set_current_map' 0 %}".replace('0', mapId);
+    }
+}
+  </script>
+  
+{% endblock %}

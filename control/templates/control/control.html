@@ -1,0 +1,337 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control your Pepper - Robot Control</title>
+    <link rel="stylesheet" href="{% static 'control/css/control_style.css' %}">
+    <link rel="stylesheet" href="{% static 'robots/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'map/css/user_maps.css' %}">
+    <link rel="stylesheet" href="{% static 'speech/css/user_speeches.css' %}">
+
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div id="data" sata-language="{{ language }}"  data-rooms_dumps="{{ rooms_dumps }}"></div>
+
+    <header class="header">
+        <h1>Control your Pepper</h1>
+        <nav class="header-nav">
+            {% if user.is_authenticated %}
+                <a href="{% url 'robot_configuration' %}" class="nav-link">Robot configuration</a>
+                <a href="{% url 'user_maps' %}" class="nav-link">my maps</a>
+                <a href="{% url 'user_robots' %}" class="nav-link">my robots</a>
+                <a href="{% url 'create_robot' %}" class="nav-link">Add Robot</a>
+                <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                <a href="{% url 'register' %}" class="nav-link">Register</a>
+            {% endif %}
+        </nav>
+
+    </header>
+    
+    <!-- Driver Selection Dropdown -->
+   <!-- Driver Selection Dropdown -->
+<div class="driver-selection">
+    <label for="driver-select">Select Driver:</label>
+    <select id="driver-select" class="driver-select">
+        <option value="naoqi_driver" {% if priority_driver == 'naoqi_driver' %}selected{% endif %}>naoqi_driver</option>
+        <option value="pepper_dcm_bringup" {% if priority_driver == 'pepper_dcm_bringup' %}selected{% endif %}>pepper_dcm_bringup</option>
+    </select>
+</div>
+    <!-- Add this right after the driver selection dropdown -->
+<div class="restart-controls">
+    <button class="restart-btn naoqi" onclick="restartDriver('naoqi')">
+        Restart Naoqi Driver
+    </button>
+    <button class="restart-btn pepper" onclick="restartDriver('pepper')">
+        Restart Pepper DCM
+    </button>
+    <button class="restart-btn both" onclick="restartDriver('both')">
+        Restart Both
+    </button>
+</div>
+{% if user.is_authenticated %}.
+    <!-- Add this section right after the restart controls -->
+    <div class="current-selection-container">
+        <!-- Current Robot Selector -->
+        <div class="robot-selector">
+            <label for="current-robot">Current Robot:</label>
+            <select id="current-robot" onchange="setCurrentRobot(this.value)">
+                {% for robot in robots %}
+                    <option value="{{ robot.id }}" {% if robot.is_current %}selected{% endif %}>
+                        {{ robot.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Current Map Selector -->
+        <div class="map-selector" style="margin: 0;">
+            <label for="current-map">Current Map:</label>
+            <select id="current-map" onchange="setCurrentMap(this.value)">
+                {% for map in maps %}
+                    <option value="{{ map.id }}" {% if map.is_current %}selected{% endif %}>
+                        {{ map.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+<div class="speech-selector" style="margin: 10px 0;">
+    <p style="text-align: center; font-weight: bold;">
+        <label for="favorite-speech" style="text-align: center;">Favorite Speech:</label>
+        <select id="favorite-speech" style=" padding: 5px; border-radius: 5px; border: 1px solid #ccc;" onchange="setFavoriteSpeech(this.value)">
+            {% for speech in speeches %}
+                <option value="{{ speech.id }}" {% if speech.is_favorite %}selected{% endif %}>
+                    {{ speech.title }}
+                </option>
+            {% endfor %}
+        </select>
+    </p>
+</div>
+    
+
+
+    {% for speech in speeches %}
+        {% if speech.is_favorite %}
+            <p style="text-align: center; position: relative; margin: 10px 0 30px; margin: 10px 0 40px 0;">
+                <a href="{% url 'play_speech' speech.id %}" class="play-btn">Play favorite speech</a>
+            </p>
+        {% endif %}
+    {% endfor %}
+
+    
+{%endif%}
+
+<style>
+.current-selection-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.robot-selector, .map-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.robot-selector select, .map-selector select {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.current-robot-control {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.control-btn {
+    padding: 12px 24px;
+    background: #3498db;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.control-btn:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+</style>
+
+<script>
+function setCurrentRobot(robotId) {
+    if (robotId) {
+        window.location.href = "{% url 'set_robot' 0%}".replace('0', robotId);
+    }
+}
+
+function setCurrentMap(mapId) {
+    if (mapId) {
+        window.location.href = "{% url 'set_map' 0 %}".replace('0', mapId);
+    }
+}
+
+function setFavoriteSpeech(speechId) {
+    if (speechId) {
+        window.location.href = "{% url 'set_speech' 0 %}".replace('0', speechId);
+    }
+}
+</script>
+
+<style>
+.restart-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.restart-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.restart-btn.naoqi {
+    background: #3498db;
+    color: white;
+}
+
+.restart-btn.pepper {
+    background: #2ecc71;
+    color: white;
+}
+
+.restart-btn.both {
+    background: #9b59b6;
+    color: white;
+}
+
+.restart-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+</style>
+
+<script>
+function restartDriver(driverType) {
+    fetch('/restart_driver/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({driver_type: driverType})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showTempMessage(`Successfully restarted ${driverType}`, 'success');
+        } else {
+            showTempMessage(`Error restarting: ${data.message}`, 'error');
+        }
+    })
+    .catch(error => {
+        showTempMessage('Connection error', 'error');
+    });
+}
+
+function showTempMessage(message, type) {
+    const msgDiv = document.createElement('div');
+    msgDiv.textContent = message;
+    msgDiv.style.position = 'fixed';
+    msgDiv.style.top = '20px';
+    msgDiv.style.left = '50%';
+    msgDiv.style.transform = 'translateX(-50%)';
+    msgDiv.style.padding = '15px 25px';
+    msgDiv.style.borderRadius = '8px';
+    msgDiv.style.color = 'white';
+    msgDiv.style.zIndex = '1000';
+    msgDiv.style.backgroundColor = type === 'success' ? '#2ecc71' : '#e74c3c';
+    
+    document.body.appendChild(msgDiv);
+    
+    setTimeout(() => {
+        document.body.removeChild(msgDiv);
+    }, 3000);
+}
+</script>
+
+    <div class="control">
+        
+        <h1>Control Your Pepper Robot</h1>
+
+        <div class="joystick-container">
+            <div class="joystick-row">
+                <button onclick="sendMove('avancer vers la gauche')" class="joystick-button">↖</button>
+                <button onclick="sendMove('avancer')" class="joystick-button">↑</button>
+                <button onclick="sendMove('avancer vers la droite')" class="joystick-button">↗</button>
+            </div>
+            <div class="joystick-row">
+                <button onclick="sendMove('aller à gauche')" class="joystick-button">←</button>
+                <button onclick="sendMove('stop')" class="joystick-button">⏹</button>
+                <button onclick="sendMove('aller à droite')" class="joystick-button">→</button>
+            </div>
+            <div class="joystick-row">
+                <button onclick="sendMove('reculer vers la gauche')" class="joystick-button">↙</button>
+                <button onclick="sendMove('reculer')" class="joystick-button">↓</button>
+                <button onclick="sendMove('reculer vers la droite')" class="joystick-button">↘</button>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button onclick="sendMove('tourner à gauche')" class="action-button">↺</button>
+            <button onclick="sendMove('tourner à droite')" class="action-button">↻</button>
+            <button onclick="sendMove('demi-tour gauche')" class="action-button">↺ 180°</button>
+            <button onclick="sendMove('demi-tour droit')" class="action-button">↻ 180°</button>
+        </div>
+    </div>
+   
+   
+    <!-- Input Zone Trigger -->
+    <div class="text-input-container">
+        <button class="text-input-icon" onclick="toggleInputZone()">💬</button>
+        <div class="input-zone hidden">
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab('question')">Ask a question</button>
+                <button class="tab-button" onclick="switchTab('speak')">Make Pepper talk</button>
+            </div>
+
+            <div class="tab-content" id="question-tab">
+                <textarea id="question-input" placeholder="Ask Pepper a question..." rows="3"></textarea>
+                <button class="send-question">Send</button>
+            </div>
+
+            <div class="tab-content hidden" id="speak-tab">
+                <textarea id="speech-input" placeholder="Write what Pepper will say..." rows="3"></textarea>
+                <button class="send-speech">Send</button>
+            </div>
+        </div>
+       </div>
+
+    {% csrf_token %}
+    <div class="destination-container">
+        <div class="destination-title">Destinations</div>
+        <input list="destinations" id="destination-input" placeholder="Choose your destination..." class="input">
+        <datalist id="destinations">
+            <!-- Dynamically populate options based on the rooms dictionary -->
+            {% for room_name in rooms.keys %}
+                <option value="{{ room_name }}"></option>
+            {% endfor %}
+        </datalist>
+       
+
+        <button class="destination-button">Send</button>
+       
+    </div>
+    <footer class="footer">
+        <div class="footer-content">
+            <span class="footer-logo">Pepper Control</span>
+            <span class="footer-divider">|</span>
+            <span>&copy; 2025 High-Tech Interface MBTO & IA</span>
+        </div>
+     
+    </footer>
+
+    <script src="{% static 'control/js/control_script.js' %}"></script>
+
+</body>
+</html>

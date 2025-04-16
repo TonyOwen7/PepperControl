@@ -1,0 +1,65 @@
+{% extends 'speech/base.html' %}
+{% block title %}Your Speeches - Pepper Control{% endblock %}
+{% block extra_css %}
+{% load static %}
+  <link rel="stylesheet" href="{% static 'speech/css/user_speeches.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container" style="flex-grow: 1;">
+    <h1>Your Speeches</h1>
+
+    <!-- Create New Speech Button -->
+            <!-- Corrected label and select IDs -->
+            <div class="speech-selector">
+                <p style="text-align: center; font-weight: bold;">
+                    <label for="favorite-speech" style="text-align: center;">Favorite Speech:</label>
+                    <select id="favorite-speech" style=" padding: 5px; border-radius: 5px; border: 1px solid #ccc;" onchange="setFavoriteSpeech(this.value)">
+                        {% for speech in speeches %}
+                            <option value="{{ speech.id }}" {% if speech.is_favorite %}selected{% endif %}>
+                                {{ speech.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </p>
+            </div>
+                
+    <!-- Display favorite speeches (no changes needed here if backend works) -->
+    {% for speech in speeches %}
+        {% if speech.is_favorite %}
+        <p style="text-align: center; position: relative;; margin: 10px 0 30px;">
+            <a href="{% url 'play_speech' speech.id %}" class="play-btn">Play favorite speech</a>
+        </p>
+        {% endif %}
+    {% endfor %}
+
+    <script>
+    // Corrected JavaScript function
+    function setFavoriteSpeech(speechId) {
+        if (speechId) {
+            window.location.href = "{% url 'set_favorite_speech' 0 %}".replace('0', speechId);
+        }
+    }
+    </script>
+    <!-- List of Speeches -->
+    {% if speeches %}
+    <div class="create-speech" style="text-align: center;">
+        <a href="{% url 'create_speech' %}" class="create-btn">Create New Speech</a>
+    </div>
+    <ul class="speech-list" style="margin: 40px 0;">
+        {% for speech in speeches %}
+            <li class="speech-item">
+                <strong>{{ speech.title }}</strong><br>
+                <p>{{ speech.content|truncatechars:100 }}</p>
+                <div class="speech-actions">
+                    <a href="{% url 'edit_speech' speech.id %}" class="edit-btn">Edit</a>
+                    <a href="{% url 'delete_speech' speech.id %}" class="delete-btn" onclick="return confirm('Are you sure you want to delete this speech?');">Delete</a>
+                    <a href="{% url 'play_speech' speech.id %}" class="play-btn">Play</a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p style="text-align: center;">You have no speeches yet. <a href="{% url 'create_speech' %}">Create a new speech</a>.</p>
+    {% endif %}
+</div>
+{% endblock %}

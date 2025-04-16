@@ -1,0 +1,268 @@
+/* General Styles */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #e5e5e5;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Header Styles */
+.header {
+  background: linear-gradient(90deg, #0078d4, #2b88d8);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.header-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Container Styles */
+.container {
+  flex: 1;
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.container h1, .container a {
+  width: 100%;
+  text-align: center;
+  margin: 50px 0;
+}
+
+
+.map-list {
+  margin-top: 50px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Style for each map item */
+.map-item {
+  background: #ffffff;
+  border: 2px solid #3498db;
+  border-radius: 10px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #2c3e50;
+  font-family: 'Orbitron', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.map-item:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.map-item strong {
+  font-size: 24px;
+  color: #3498db;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.map-item p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #34495e;
+}
+
+.map-item .label {
+  font-weight: bold;
+  color: #3498db;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.map-item .value {
+  color: #2c3e50;
+  font-weight: 600;
+  color: #35dca4;
+}
+
+.map-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn, .delete-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.edit-btn {
+  background: #25f312;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #28bb1b;
+}
+
+.delete-btn {
+  background: #3ce7c2;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #4caf9a;
+}
+
+/* myapp/static/map/css/styles.css */
+
+/* Map Selector */
+.map-selector {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.map-selector label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.map-selector select {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Create New Map Button */
+.create-map {
+  margin-bottom: 20px;
+}
+
+.create-btn {
+  background: #0078d4;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.create-btn:hover {
+  background: #0056b3;
+}
+
+/* Map List */
+.map-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.map-item {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.map-item strong {
+  font-size: 1.2em;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.map-item p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 0.9em;
+}
+
+.map-actions {
+  margin-top: 10px;
+}
+
+
+
+/* Footer Styles */
+.footer {
+  background: linear-gradient(90deg, #f0f5ff, #e6edff);
+  padding: 20px 0;
+  text-align: center;
+  color: #5a5a5a;
+  font-size: 14px;
+  border-top: 1px solid #e0e8f9;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+  margin-top: 40px;
+}
+
+.footer-content {
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer-logo {
+  font-weight: 600;
+  color: #0078d4;
+  margin-right: 10px;
+}
+
+.footer-divider {
+  margin: 0 10px;
+  color: #bbb;
+}

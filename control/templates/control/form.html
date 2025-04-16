@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control your Pepper</title>
+    <link rel="stylesheet" href="{% static 'control/css/form_style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <h1>Control Your Pepper</h1>
+        <nav class="header-nav">
+            {% if user.is_authenticated %}
+                <!-- Show Logout if the user is authenticated -->
+                <a href="{% url 'user_speeches' %}" class="nav-link">my speeches</a>
+                <a href="{% url 'user_maps' %}" class="nav-link">my maps</a>
+                <a href="{% url 'user_robots' %}" class="nav-link">my robots</a>
+                <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+            {% else %}
+                <!-- Show Login and Register if the user is not authenticated -->
+                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                <a href="{% url 'register' %}" class="nav-link">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <form id="pepperForm" method="post">
+                {% csrf_token %}  
+                <h2>Robot Configuration</h2>
+                
+                <div class="input-box">
+                    <input type="text" id="robot_ip" name="robot_ip" required>
+                    <label for="robot_ip">Robot IP</label>
+                </div>
+                
+                <div class="input-box">
+                    <input type="text" id="network_interface" name="network_interface" required>
+                    <label for="network_interface">Network Interface</label>
+                </div>
+                
+                <div class="radio-group">
+                    <span class="radio-label">Choose Language:</span>
+                    <div class="radio-options">
+                        <label class="radio-container">
+                            Français
+                            <input type="radio" id="fr_language" name="language" value="fr" required>
+                            <span class="radiomark"></span>
+                        </label>
+                        <label class="radio-container">
+                            English
+                            <input type="radio" id="en_language" name="language" value="en" required>
+                            <span class="radiomark"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="radio-group">
+                    <span class="radio-label">Choose priority driver:</span>
+                    <div class="radio-options">
+                        <label class="radio-container">
+                            Naoqi driver
+                            <input type="radio" id="naoqi_driver" name="priority_driver" value="naoqi_driver" required>
+                            <span class="radiomark"></span>
+                        </label>
+                        <label class="radio-container">
+                            Pepper dcm bringup
+                            <input type="radio" id="pepper_dcm_bringup" name="priority_driver" value="pepper_dcm_bringup" required>
+                            <span class="radiomark"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">Connect</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <span class="footer-logo">Pepper Control</span>
+            <span class="footer-divider">|</span>
+            <span>&copy; 2025 High-Tech Interface MBTO & IA</span>
+        </div>
+    </footer>
+
+    <script src="{% static 'control/js/form_script.js' %}"></script>
+</body>
+</html>

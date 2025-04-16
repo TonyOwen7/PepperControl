@@ -1,0 +1,78 @@
+{% extends 'robots/base.html' %}
+{% block title %}Edit Robot - Pepper Control{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Edit Robot: {{ robot.name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Render each form field manually -->
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Robot Name</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div class="error">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.nao_ip.id_for_label }}">Nao IP</label>
+            {{ form.nao_ip }}
+            {% if form.nao_ip.errors %}
+                <div class="error">{{ form.nao_ip.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.network_interface.id_for_label }}">Network Interface</label>
+            {{ form.network_interface }}
+            {% if form.network_interface.errors %}
+                <div class="error">{{ form.network_interface.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.language.id_for_label }}">Language</label>
+            {{ form.language }}
+            {% if form.language.errors %}
+                <div class="error">{{ form.language.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- New Fields -->
+        <div class="form-group">
+            <label for="{{ form.floor.id_for_label }}">Floor</label>
+            {{ form.floor }}
+            {% if form.floor.errors %}
+                <div class="error">{{ form.floor.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.row.id_for_label }}">Row</label>
+            {{ form.row }}
+            {% if form.row.errors %}
+                <div class="error">{{ form.row.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.column.id_for_label }}">Column</label>
+            {{ form.column }}
+            {% if form.column.errors %}
+                <div class="error">{{ form.column.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.direction.id_for_label }}">Direction</label>
+            {{ form.direction }}
+            {% if form.direction.errors %}
+                <div class="error">{{ form.direction.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="submit-btn">Save Changes</button>
+    </form>
+</div>
+{% endblock %}
