@@ -327,11 +327,13 @@ def user_maps(request):
     Displays all maps associated with the logged-in user.
     """
     maps = Map.objects.filter(user=request.user)
-    current_map = get_object_or_404(Map, user=request.user, is_current=True)
-    if not current_map:
-        current_map = get_object_or_404(Map, user=request.user).first() 
-        current_map.is_current = True         
-        
+    current_map = None
+    if not maps.exists():
+        current_map = maps.filter(is_favorite=True)
+        if not current_map:
+            current_map = maps.first() 
+            current_map.is_current = True   
+            current_map.save()    
     return render(request, 'map/user_maps.html', {'maps': maps})
 
 

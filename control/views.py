@@ -98,14 +98,14 @@ def set_robot(request, robot_id):
     
     robots = Robot.objects.filter(user=request.user)
     maps = Map.objects.filter(user=request.user)
-    if request.user.is_authenticated:
-        current_map = get_object_or_404(Map, user=request.user, is_current=True)
-        if not current_map:
-            current_map = get_object_or_404(Map, user=request.user).first()          
+
+    current_map = get_object_or_404(Map, user=request.user, is_current=True)
+    if not current_map:
+        current_map = get_object_or_404(Map, user=request.user).first()          
         
-        if current_map:
-            matrices = current_map.matrices  # Use the matrices field
-            rooms = current_map.rooms  # Use the rooms field
+    if current_map:
+        matrices = current_map.matrices  # Use the matrices field
+        rooms = current_map.rooms  # Use the rooms field
        
     return redirect(f'/submit/?robot_ip={robot.nao_ip}&network_interface={robot.network_interface}&language={robot.language}&priority_driver={priority_driver}')
     
@@ -128,14 +128,14 @@ def set_map(request, map_id):
     robots = Robot.objects.filter(user=request.user)
     maps = Map.objects.filter(user=request.user)
     speeches = Speech.objects.filter(user=request.user)
-    if request.user.is_authenticated:
-        current_map = get_object_or_404(Map, user=request.user, is_current=True)
-        if not current_map:
-            current_map = get_object_or_404(Map, user=request.user).first()          
+
+    current_map = get_object_or_404(Map, user=request.user, is_current=True)
+    if not current_map:
+        current_map = get_object_or_404(Map, user=request.user).first()          
         
-        if current_map:
-            matrices = current_map.matrices  # Use the matrices field
-            rooms = current_map.rooms  # Use the rooms field
+    if current_map:
+        matrices = current_map.matrices  # Use the matrices field
+        rooms = current_map.rooms  # Use the rooms field
        
     return render(request, 'control/control.html', {'robots' : robots, 'maps':maps, 'speeches': speeches, 'priority_driver': priority_driver, 'matrices':json.dumps(matrices), 'rooms':rooms, 'rooms_dumps':json.dumps(rooms),  })
 

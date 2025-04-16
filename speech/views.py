@@ -16,7 +16,7 @@ def set_favorite_speech(request, speech_id):
     
     # Get the specific speech object
     speech = get_object_or_404(Speech, id=speech_id, user=request.user)
-    print(speech)
+
     # Set this speech as favorite
     speech.is_favorite = True
     speech.save()
@@ -27,6 +27,18 @@ def set_favorite_speech(request, speech_id):
 @login_required
 def speech_list(request):
     speeches = Speech.objects.filter(user=request.user)
+    favorite_speech = None
+
+    if speeches.exists():
+        # Attempt to retrieve the favorite speech
+        favorite_speech = speeches.filter(is_favorite=True).first()
+        
+        # If no favorite exists, set the first speech as favorite
+        if not favorite_speech:
+            favorite_speech = speeches.first()
+            favorite_speech.is_favorite = True
+            favorite_speech.save()
+
     return render(request, 'speech/user_speeches.html', {'speeches': speeches})
 
 @login_required

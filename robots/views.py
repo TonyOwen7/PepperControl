@@ -30,10 +30,13 @@ def user_robots(request):
 
     # Get the robots belonging to the logged-in user
     robots = Robot.objects.filter(user=request.user)
-    current_robot = get_object_or_404(Robot, user=request.user, is_current=True)
-    if not current_robot:
-        current_robot = get_object_or_404(Robot, user=request.user).first() 
-        current_robot.is_current = True         
+    current_robot = None
+    if not robots.exists():
+        current_robot = robots.filter(is_favorite=True)
+        if not current_robot:
+            current_robot = robots.first() 
+            current_robot.is_current = True   
+            current_robot.save()      
         
     return render(request, 'robots/user_robots.html', {'robots': robots})
 
