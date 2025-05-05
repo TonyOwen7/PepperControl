@@ -101,7 +101,7 @@
     {% for speech in speeches %}
         {% if speech.is_favorite %}
             <p style="text-align: center; position: relative; margin: 10px 0 30px; margin: 10px 0 40px 0;">
-                <a href="{% url 'play_speech' speech.id %}" class="play-btn">Play favorite speech</a>
+                <a href="{% url 'play_speech_control' speech.id %}" class="play-btn">Play favorite speech</a>
             </p>
         {% endif %}
     {% endfor %}

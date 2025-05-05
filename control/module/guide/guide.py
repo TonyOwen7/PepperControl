@@ -141,8 +141,20 @@ def guide_aux(path, driver):
 
     print("guide")
             
-def guide(driver, chosen_location, myMap=None, robot=None, myLocationQueries=None):
+def guide(driver, chosen_location, myMap=None, robot=None, myLocationQueries=None, language="fr"):
     global university_matrix, location_queries, pepper_position, pepper_direction
+
+    translations = {
+        "fr": {
+            "follow_me": "Suivez-moi, je vais vous mener vers ",
+            "destination_unreachable": "Désolé, je ne peux pas atteindre cette destination."
+        },
+        "en": {
+            "follow_me": "Follow me, I will lead you to ",
+            "destination_unreachable": "Sorry, I can't reach this destination."
+        }
+        # Add other languages as needed
+    }
 
     if robot:
         pepper_position = [robot.floor, robot.row, robot.column] 
@@ -155,28 +167,30 @@ def guide(driver, chosen_location, myMap=None, robot=None, myLocationQueries=Non
             if re.search(location_regex, chosen_location, re.IGNORECASE):
                 floor, row, col = location_queries[location]
                 print(f"Location found: {location}, at floor {floor} row {row}, column {col}")
-                location_found = True
                 path = bfs(university_matrix, tuple(pepper_position), (floor, row, col))
 
                 if path is not None:
-                    pepper_speak("Suivez moi, je vous venez menez vers" + "la " + location)
+                    pepper_speak(translations[language]["follow_me"] + "la " + location)
+                    print("path", path)
                     guide_aux(path, driver)  
                 else:
-                    print("Désolé, je ne peux pas atteindre cette destination.")
+                    pepper_speak(translations[language]["destination_unreachable"])
+                    print(translations[language]["destination_unreachable"])
                 break
     else:
         for location in myLocationQueries.keys():
-            print(location)
             location_regex = re.sub(r"\s+", r"\\s+", location)
 
             if re.search(location_regex, chosen_location, re.IGNORECASE):
                 floor, row, col = myLocationQueries[location]
                 print(f"Location found: {location}, at floor {floor} row {row}, column {col}")
-                location_found = True
                 path = bfs(myMap, tuple(pepper_position), (floor, row, col))
+                
                 if path is not None:
-                    pepper_speak("Suivez moi, je vous venez menez vers" + "la " + location)
+                    pepper_speak(translations[language]["follow_me"] + "la " + location)
+                    print("path", path)
                     guide_aux(path, driver)   
                 else:
-                    print("Désolé, je ne peux pas atteindre cette destination.")
+                    pepper_speak(translations[language]["destination_unreachable"])
+                    print(translations[language]["destination_unreachable"])
                 break

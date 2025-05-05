@@ -170,10 +170,22 @@ def set_speech(request, speech_id):
 
 
 @login_required
-def play_speech(request, speech_id):
+def play_speech_control(request, speech_id):
     speech = get_object_or_404(Speech, id=speech_id, user=request.user)
     pepper_speak(speech.content)
-    return redirect('control')
+    robots = Robot.objects.filter(user=request.user)
+    maps = Map.objects.filter(user=request.user)
+    speeches = Speech.objects.filter(user=request.user)
+
+    current_map = get_object_or_404(Map, user=request.user, is_current=True)
+    if not current_map:
+        current_map = get_object_or_404(Map, user=request.user).first()          
+        
+    if current_map:
+        matrices = current_map.matrices  # Use the matrices field
+        rooms = current_map.rooms  # Use the rooms field
+       
+    return render(request, 'control/control.html', {'robots' : robots, 'maps':maps, 'speeches': speeches, 'priority_driver': priority_driver, 'matrices':json.dumps(matrices), 'rooms':rooms, 'rooms_dumps':json.dumps(rooms),  })
 
 
 from django.http import JsonResponse
@@ -183,7 +195,7 @@ from django.views.decorators.http import require_http_methods
 
 @require_http_methods(["GET", "POST"])
 def submit_robot_data(request):
-    global priority_driver
+    global priority_driver, language
     try:
         if request.user.is_authenticated:
             user_robots = Robot.objects.filter(user=request.user)
@@ -194,11 +206,12 @@ def submit_robot_data(request):
        
         # Common processing function
         def process_data(data):
+            global language, priority_driver
             robot_ip = data.get('robot_ip')
             network_interface = data.get('network_interface')
             language = data.get('language')
             priority_driver = data.get('priority_driver')
-            
+          
             if request.user.is_authenticated:
 
                 # Get the robot object or return 404 if not found
@@ -218,6 +231,8 @@ def submit_robot_data(request):
                 'message': 'Operation successful',
                 'redirect_url': '/control/'
             }
+
+
 
         # Handle different methods
         if request.method == 'GET':
@@ -258,8 +273,6 @@ def handle_move(request):
 
             if command_move:
                 if priority_driver == "naoqi_driver":
-                    print("test")
-
                     if robot_process_manager.naoqi_process is not None:
 
                         try:
@@ -291,7 +304,7 @@ def handle_move(request):
 
 
 def handle_guiding(request):
-    global matrices, rooms, robot_process_manager, priority_driver
+    global matrices, rooms, robot_process_manager, priority_driver, language
     current_robot = None
   
     if request.method == 'POST':
@@ -307,7 +320,7 @@ def handle_guiding(request):
                 if priority_driver == "naoqi_driver":
                     if robot_process_manager.naoqi_process is not None:
                         try:
-                            guide("naoqi_driver", location, matrices, current_robot, rooms)
+                            guide("naoqi_driver", location, matrices, current_robot, rooms, language)
 
                             return JsonResponse({'message': 'Guidage en cours via Naoqi Driver'})
                         except Exception as e:
@@ -316,7 +329,7 @@ def handle_guiding(request):
                 else:
                     if robot_process_manager.pepper_process is not None:
                         try:
-                            guide("pepper_dcm_bringup", location, matrices, current_robot, rooms)
+                            guide("pepper_dcm_bringup", location, matrices, current_robot, rooms, language)
                             return JsonResponse({'message': 'Guidage en cours via Pepper DCM'})
                         except Exception as e:
                             print(f"Pepper DCM guidance failed: {e}, trying naoqi driver")   
@@ -336,7 +349,7 @@ def handle_question(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            question = data.get('question')
+            question = data.get('question', language)
 
             if question and language:
                 response = wiki_response(question, language)  # Replace with your logic

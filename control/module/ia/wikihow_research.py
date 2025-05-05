@@ -1,5 +1,5 @@
 from research import *
-def rechercher_wikihow(question, language):
+def rechercher_wikihow(question, language="fr"):
     try:
         search_url = f"https://{language}.wikihow.com/wikiHowTo?search={question}"
         response = requests.get(search_url)
