@@ -155,3 +155,131 @@ def move(driver, command_name, duration=0.5):
     except Exception as e:
         print(f"Erreur lors de l'exécution: {e}")
      
+
+def point_direction(direction="ahead", duration=3.0):
+    """
+    Makes Pepper point in a specified direction with its arm.
+    
+    Parameters:
+    - direction (str): Direction to point ("ahead", "left", "right", "up", "down")
+    - duration (float): How long to hold the pointing position in seconds
+    
+    Returns:
+    - subprocess.Popen: Process object of the executed command
+    """
+    # Joint positions dictionary for different pointing directions
+    # Format: [ShoulderPitch, ShoulderRoll, ElbowRoll, ElbowYaw, WristYaw]
+    # Note: Values are in radians
+    pointing_positions = {
+        "ahead": {
+            "right_arm": [0.2, -0.3, 0.0, 0.0, 0.0],  # Right arm extended forward
+            "left_arm": [0.2, 0.3, 0.0, 0.0, 0.0]     # Left arm extended forward
+        },
+        "left": {
+            "right_arm": [0.2, 0.3, 0.0, 1.0, 0.0],   # Right arm pointing left
+            "left_arm": [0.2, 0.8, 0.0, 0.0, 0.0]     # Left arm pointing left
+        },
+        "right": {
+            "right_arm": [0.2, -0.8, 0.0, 0.0, 0.0],  # Right arm pointing right
+            "left_arm": [0.2, -0.3, 0.0, -1.0, 0.0]   # Left arm pointing right
+        },
+        "up": {
+            "right_arm": [-1.0, -0.3, 0.0, 0.0, 0.0], # Right arm pointing up
+            "left_arm": [-1.0, 0.3, 0.0, 0.0, 0.0]    # Left arm pointing up
+        },
+        "down": {
+            "right_arm": [1.5, -0.3, 0.0, 0.0, 0.0],  # Right arm pointing down
+            "left_arm": [1.5, 0.3, 0.0, 0.0, 0.0]     # Left arm pointing down
+        }
+    }
+    
+    # Check if the requested direction is valid
+    if direction not in pointing_positions:
+        raise ValueError(f"Direction '{direction}' not supported. Choose from: {', '.join(pointing_positions.keys())}")
+    
+    # We'll use the right arm for pointing by default
+    arm = "right_arm"
+    positions = pointing_positions[direction][arm]
+    
+    # Create the rostopic command to move the right arm joints
+    joint_names = "RShoulderPitch,RShoulderRoll,RElbowRoll,RElbowYaw,RWristYaw"
+    position_values = ",".join(map(str, positions))
+    
+    # Using trajectory_msgs/JointTrajectory message to control arm joints
+    command = f"""rostopic pub -1 /pepper_dcm/RightArm_controller/command trajectory_msgs/JointTrajectory \
+    "header:
+      stamp: now
+    joint_names: [{', '.join(f'"{name}"' for name in joint_names.split(','))}]
+    points:
+    - positions: [{position_values}]
+      time_from_start:
+        secs: 1"
+    """
+
+    try:
+        # Execute the command in a new terminal
+        process = subprocess.Popen(
+            command,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        
+        # Hold the position for the specified duration
+        if duration > 0:
+            time.sleep(duration)
+            
+            # Return to a neutral position after pointing
+            neutral_positions = [1.0, -0.1, 0.5, 0.0, 0.0]  # Neutral position
+            neutral_values = ",".join(map(str, neutral_positions))
+            
+            neutral_command = f"""rostopic pub -1 /pepper_dcm/RightArm_controller/command trajectory_msgs/JointTrajectory \
+            "header:
+              stamp: now
+            joint_names: [{', '.join(f'"{name}"' for name in joint_names.split(','))}]
+            points:
+            - positions: [{neutral_values}]
+              time_from_start:
+                secs: 1"
+            """
+
+        
+            
+            subprocess.Popen(
+                neutral_command,
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE,
+                shell=True
+            )
+            
+        return process
+        
+    except Exception as e:
+        print(f"Error executing pointing gesture: {e}")
+        return None
+
+def point_and_move(driver, movement_command, pointing_direction="ahead", duration=2.0):
+    """
+    Makes Pepper move in a direction while pointing in the specified direction,
+    running each action in a separate terminal.
+    
+    Parameters:
+    - driver (str): The driver to use ("naoqi_driver" or "pepper_dcm_bringup")
+    - movement_command (str): The movement command (e.g., "avancer", "tourner à gauche")
+    - pointing_direction (str): Direction to point ("ahead", "left", "right", "up", "down")
+    - duration (float): How long to move and point in seconds
+    
+    Returns:
+    - tuple: (movement_process, pointing_process)
+    """
+    # Start pointing gesture in its own terminal
+    pointing_process = point_direction(pointing_direction, duration + 0.5)
+    
+    # Wait a short moment for the arm to start moving
+    time.sleep(0.5)
+    
+    # Start the movement in its own terminal
+    movement_process = move(driver, movement_command, duration)
+    
+    return movement_process, pointing_process
+

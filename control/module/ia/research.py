@@ -9,6 +9,8 @@ from bs4 import BeautifulSoup
 import re
 from collections import Counter
 
+
+
 def extract_keywords(text):
     """Extract keywords from text."""
     return set(re.findall(r'\w+', text.lower()))

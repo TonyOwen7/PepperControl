@@ -113,70 +113,132 @@ def upgrade_position_and_direction(path):
 
                                                   
     return commands
+def guide_aux(path, driver, language="fr"):
+    """
+    Guides the user along a path using movement commands.
+    
+    Parameters:
+    - path (list): Path sequence to follow.
+    - driver (str): The control system (e.g., "naoqi_driver").
+    - language (str): Language for verbal instructions ("fr" or "en").
+    """
+    commands = clearup_sequence_of_moves(upgrade_position_and_direction(path))
 
-def guide_aux(path, driver):
-    commands = upgrade_position_and_direction(path)
-    commands = clearup_sequence_of_moves(commands)
+    translations = {
+        "fr": {
+            "follow_me": "Allons-y",
+            "cannot_climb": "Là, je ne peux plus monter, je vais vous guider vers votre destination. Maintenant, il faudra prendre l'ascenseur.",
+            "take_elevator": "Prendre l'ascenseur"
+        },
+        "en": {
+            "follow_me": "Let's go",
+            "cannot_climb": "At this point, I can't go upstairs, so I'll guide you to your destination. Now, you need to take the elevator.",
+            "take_elevator": "Take the elevator."
+        }
+    }
+    
+    lang_texts = translations.get(language, translations["fr"])  # Defaults to French if unsupported language
 
     go_up_to_the_next_floor = False
     i = 0
-    
+
+    # Start movement process
+    pepper_speak(lang_texts["follow_me"])
+    point_and_move(driver, commands[0][0], commands[0][1])
+    i += 1
+
     while i < len(commands) and not go_up_to_the_next_floor:
         if commands[i][0] == "monter":
             go_up_to_the_next_floor = True
         move(driver, commands[i][0], commands[i][1])
         if driver == "naoqi_driver":
             move(driver, "stop")
+        i += 1
 
-        i+=1
     if go_up_to_the_next_floor:
-        pepper_speak("Je ne peux plus monter, je vais vous guider vers votre destination. Maintenant, prenez l'ascenseur")
+        pepper_speak(lang_texts["cannot_climb"])
 
         while i < len(commands):
             if commands[i][0] == "monter":
-                pepper_speak("Prendre l'ascenseur")
+                pepper_speak(lang_texts["take_elevator"])
             else:
                 pepper_speak(commands[i][0])
-            i+=1
+            i += 1
 
-    print("guide")
+    print("Guide complete.")
+
             
+import re
+
 def guide(driver, chosen_location, myMap=None, robot=None, myLocationQueries=None, language="fr"):
     global university_matrix, location_queries, pepper_position, pepper_direction
-
+    
+    # Translation dictionary
     translations = {
         "fr": {
             "follow_me": "Suivez-moi, je vais vous mener vers ",
-            "destination_unreachable": "Désolé, je ne peux pas atteindre cette destination."
+            "destination_unreachable": "Désolé, je ne peux pas atteindre cette destination.",
+            "guidance_intro": "Pour aller à ",
+            "next_steps": "il faut suivre le guidage suivant, voici ce que vous allez faire:",
+            "cannot_climb": "Je ne pourrai pas monter, je vais vous guider vers votre destination. Maintenant, il faudra prendre l'ascenseur",
+            "take_elevator": "Prendre l'ascenseur"
         },
         "en": {
             "follow_me": "Follow me, I will lead you to ",
-            "destination_unreachable": "Sorry, I can't reach this destination."
+            "destination_unreachable": "Sorry, I can't reach this destination.",
+            "guidance_intro": "To get to ",
+            "next_steps": "you need to follow this guidance, here is what you will do:",
+            "cannot_climb": "I cannot go upstairs, I will guide you to your destination. Now, you need to take the elevator",
+            "take_elevator": "Take the elevator"
         }
-        # Add other languages as needed
     }
 
+    # Get translations based on the language choice
+    lang_texts = translations.get(language, translations["fr"])  # Defaults to French if unsupported language
+    
+    # Update Pepper position if robot is provided
     if robot:
         pepper_position = [robot.floor, robot.row, robot.column] 
         pepper_direction = [robot.direction] 
 
-    if robot is not None:
-        for location in location_queries.keys():
-            location_regex = re.sub(r"\s+", r"\\s+", location)
+    location_db = location_queries if robot else myLocationQueries
+    matrix_db = university_matrix if robot else myMap
 
-            if re.search(location_regex, chosen_location, re.IGNORECASE):
-                floor, row, col = location_queries[location]
-                print(f"Location found: {location}, at floor {floor} row {row}, column {col}")
-                path = bfs(university_matrix, tuple(pepper_position), (floor, row, col))
+    for location, (floor, row, col) in location_db.items():
+        if re.search(re.sub(r"\s+", r"\\s+", location), chosen_location, re.IGNORECASE):
+            print(f"Location found: {location}, at floor {floor}, row {row}, column {col}")
+            path = bfs(matrix_db, tuple(pepper_position), (floor, row, col))
 
-                if path is not None:
-                    pepper_speak(translations[language]["follow_me"] + "la " + location)
-                    print("path", path)
-                    guide_aux(path, driver)  
-                else:
-                    pepper_speak(translations[language]["destination_unreachable"])
-                    print(translations[language]["destination_unreachable"])
-                break
+            if path:
+                pepper_speak(lang_texts["follow_me"] + location)
+                print("Path:", path)
+
+                go_up_to_the_next_floor = False
+                i = 0
+
+                pepper_speak(lang_texts["guidance_intro"] + location + " " + lang_texts["next_steps"])
+                while i < len(commands) and not go_up_to_the_next_floor:
+                    if commands[i][0] == "monter":
+                        go_up_to_the_next_floor = True
+                        continue
+                    pepper_speak(commands[i][0])
+                    i += 1
+
+                if go_up_to_the_next_floor:
+                    pepper_speak(lang_texts["cannot_climb"])
+
+                    while i < len(commands):
+                        if commands[i][0] == "monter":
+                            pepper_speak(lang_texts["take_elevator"])
+                        else:
+                            pepper_speak(commands[i][0])
+                        i += 1
+
+                guide_aux(path, driver)  
+            else:
+                pepper_speak(lang_texts["destination_unreachable"])
+                print(lang_texts["destination_unreachable"])
+            break
     else:
         for location in myLocationQueries.keys():
             location_regex = re.sub(r"\s+", r"\\s+", location)
@@ -187,10 +249,33 @@ def guide(driver, chosen_location, myMap=None, robot=None, myLocationQueries=Non
                 path = bfs(myMap, tuple(pepper_position), (floor, row, col))
                 
                 if path is not None:
-                    pepper_speak(translations[language]["follow_me"] + "la " + location)
-                    print("path", path)
-                    guide_aux(path, driver)   
-                else:
-                    pepper_speak(translations[language]["destination_unreachable"])
-                    print(translations[language]["destination_unreachable"])
-                break
+
+                    pepper_speak(lang_texts["follow_me"] + location)
+                print("Path:", path)
+
+                go_up_to_the_next_floor = False
+                i = 0
+
+                pepper_speak(lang_texts["guidance_intro"] + location + " " + lang_texts["next_steps"])
+                while i < len(commands) and not go_up_to_the_next_floor:
+                    if commands[i][0] == "monter":
+                        go_up_to_the_next_floor = True
+                        continue
+                    pepper_speak(commands[i][0])
+                    i += 1
+
+                if go_up_to_the_next_floor:
+                    pepper_speak(lang_texts["cannot_climb"])
+
+                    while i < len(commands):
+                        if commands[i][0] == "monter":
+                            pepper_speak(lang_texts["take_elevator"])
+                        else:
+                            pepper_speak(commands[i][0])
+                        i += 1
+
+                guide_aux(path, driver)  
+            else:
+                pepper_speak(lang_texts["destination_unreachable"])
+                print(lang_texts["destination_unreachable"])
+            break
